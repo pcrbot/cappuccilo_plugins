@@ -92,6 +92,7 @@
 ### 部署
 
 - 将本项目的`generator`文件夹，放入`hoshino/modules`文件夹下
+- 在Releases下载`simhei.ttf`字体文件并放入`generator`文件夹
 - 在hoshino的配置文件中添加`generator`模块
 - 重启hoshino
 
