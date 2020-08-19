@@ -129,13 +129,8 @@ async def start_scheduled(bot, ev: CQEvent):
 async def scheduled_job():
     for key in _group_calendar:
         time = _group_calendar[key].get('time', '08:00')
-        if _group_calendar[key].get('enable', False) and time_diff(time) == 0:
+        flag = datetime.datetime.now().strftime('%H:%M') == time
+        if _group_calendar[key].get('enable', False) and flag:
             bot = nonebot.get_bot()
             result = await Event(_group_calendar[key]).send_daily_async(2)
             await bot.send_group_msg(group_id = key, message = result)
-
-def time_diff(time):
-    date_str = datetime.datetime.now().strftime('%Y-%m-%d') + ' ' + time
-    date = datetime.datetime.strptime(date_str,'%Y-%m-%d %H:%M')
-    timestamp = date.timestamp() - datetime.datetime.now().timestamp()
-    return int(timestamp / 60)
