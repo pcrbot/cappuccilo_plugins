@@ -18,6 +18,7 @@ sv = Service('picfinder', help_='''
 api_key=""#填写你自己的api_key
 minsim='70!'#相似度下限，低于下限不显示结果
 thumbSize = (250,250)
+MAX_NUM = 10 #单次搜索最大请求次数
 
 #启用或禁用索引，1：启用，0：禁用
 index_hmags='0'#0: H-Magazines  (Last Updated: December 2010) 不完整 - 大部分被 #18 替代
@@ -76,13 +77,19 @@ async def picfinder(bot, ev: CQEvent):
     url = 'http://saucenao.com/search.php?output_type=2&numres=1&minsim='+minsim+'&dbmask='+str(db_bitmask)+'&api_key='+api_key
     files = {'file': ("image.png", imageData.getvalue())}
     imageData.close()
-    
+    await bot.send(ev, '正在搜索, 请稍等', at_sender=True)
     processResults = True
-    while True:
+    counter = 0
+    while counter <= MAX_NUM:
+        counter = counter+1
         r = requests.post(url, files=files)
         if r.status_code != 200:
             if r.status_code == 403:
-                print('Incorrect or Invalid API Key! Please Edit Script to Configure...')
+                await bot.send(ev, 'Key错误, 请联系维护者')
+                return
+            elif r.status_code == 429:
+                await bot.send(ev, '请求次数过f多, 请联系维护者')
+                return
             else:
                 print("status code: "+str(r.status_code))
         else:
