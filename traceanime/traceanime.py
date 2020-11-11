@@ -51,7 +51,7 @@ def get_details(anilist_id):
     }
     url = 'https://graphql.anilist.co'
     response = requests.post(url, json={'query': query, 'variables': variables})
-    dic = eval(str(response.content,'utf-8'))
+    dic = json.loads(str(response.content,'utf-8'))
     return dic['data']['Media']
 
 @sv.on_prefix(('搜番', '查番', '找番', '识番'))
