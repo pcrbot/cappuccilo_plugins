@@ -10,6 +10,7 @@ from collections import OrderedDict
 from hoshino import Service
 from hoshino.typing import CQEvent, MessageSegment
 from hoshino.util import pic2b64
+from hoshino import aiorequests
 
 sv = Service('picfinder', help_='''
 [识图+图片] 查询图片来源
@@ -82,18 +83,20 @@ async def picfinder(bot, ev: CQEvent):
     counter = 0
     while counter <= MAX_NUM:
         counter = counter+1
-        r = requests.post(url, files=files)
-        if r.status_code != 200:
-            if r.status_code == 403:
+        #r = requests.post(url, files=files)
+        r = await aiorequests.post(url, files=files)
+        status_code =  r.status_code
+        if status_code != 200:
+            if status_code == 403:
                 await bot.send(ev, 'Key错误, 请联系维护者')
                 return
-            elif r.status_code == 429:
-                await bot.send(ev, '请求次数过f多, 请联系维护者')
+            elif status_code == 429:
+                await bot.send(ev, '请求次数过, 请联系维护者')
                 return
             else:
-                print("status code: "+str(r.status_code))
+                print("status code: "+str(status_code))
         else:
-            results = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(r.text)
+            results = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(await r.text)
             if int(results['header']['user_id'])>0:
                 print('搜索限制 30s|24h: '+str(results['header']['short_remaining'])+'|'+str(results['header']['long_remaining']))
                 if int(results['header']['status'])==0:
