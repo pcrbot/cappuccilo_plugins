@@ -224,7 +224,7 @@ async def picfinder(bot, ev: CQEvent):
                 elif index_id == 34:
                     service_name='deviantArt'
                     illust_id=results['results'][0]['data']['da_id']
-                    author_name = results['results'][0]['data']['pawoo_user_username']
+                    author_name = results['results'][0]['data']['author_name']
                     title = results['results'][0]['data']['title']
                 # elif index_id == 35:
                 #     service_name='Pawoo.net'
